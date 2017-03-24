@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2012-2016 Adobe Systems Incorporated. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />
+    <!-- Good default declaration:
+    * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+    * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+    * Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+        * Enable inline JS: add 'unsafe-inline' to default-src
+        * Enable eval(): add 'unsafe-eval' to default-src
+    * Create your own at http://cspisawesome.com
+    -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
+
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+	<script src="js/jquery-1.11.1.min.js"></script>
+	<script src="js/jquery-ui.min.js"></script>
+	<script src="js/jquery-ui-i18n.min.js"type="text/javascript"></script>
+	<script src="js/jquery-1.12.4.js"></script>
+  	<script src="js/jquery-ui.js"></script>
+	<script src="http://ovnetwork.de/filmeraten/changelog.js"></script>
+	<script src="http://ovnetwork.de/filmeraten/tracks.js"></script>
+	<script src="http://ovnetwork.de/filmeraten/app/core_android.js"></script>
+    <title>Filme raten</title>
+
+<style>
+body {
+background: #333;
+overflow: hidden;
+}
+
+#body {
+background: #333;
+/*border-radius: 20px;
+width: 780px;
+height: 550px;
+box-shadow: 0px 0px 20px 2px black;*/
+}
+
+/*#head {
+width: 600px;
+height: 30px;
+margin-left: 90px;
+border-radius: 10px 10px 0px 0px;
+text-align: right;
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#aebcbf+0,6e7774+50,0a0e0a+51,0a0809+100;Black+Gloss */
+background: #aebcbf; /* Old browsers */
+background: -moz-linear-gradient(top,  #aebcbf 0%, #6e7774 50%, #0a0e0a 51%, #0a0809 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top,  #aebcbf 0%,#6e7774 50%,#333 51%,#333 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom,  #aebcbf 0%,#6e7774 50%,#333 51%,#333 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#aebcbf', endColorstr='#0a0809',GradientType=0 ); /* IE6-9 */
+}*/
+
+#close {
+background: rgba(100,100,100,0.5);
+border-radius: 5px;
+border: 1px outset rgba(100,100,100,0.5);
+color: white;
+margin-right: 5px;
+margin-top: 5px;
+width: 20px;
+height: 20px;
+text-align: center;
+}
+
+#setup {
+background: #222;
+border: 1px outset black;
+border-radius: 10px;
+position: absolute;
+left: 0;
+right: 0;
+top: 0;
+bottom: 0;
+margin: auto;
+width: 400px;
+height: 180px;
+color: #eee;
+text-align: center;
+padding-top: 20px;
+}
+
+#button {
+background: #222;
+border: 1px outset black;
+border-radius: 10px;
+position: absolute;
+left: 0;
+right: 0;
+top: 0;
+bottom: 0;
+margin: auto;
+width: 400px;
+height: 180px;
+color: #eee;
+text-align: center;
+padding-top: 20px;
+}
+
+#answers {
+background: #222;
+border: 1px outset black;
+border-radius: 10px;
+position: absolute;
+left: 0;
+right: 0;
+top: 0;
+bottom: 0;
+margin: auto;
+width: 400px;
+height: 180px;
+color: #eee;
+text-align: center;
+padding-top: 20px;
+overflow-y: auto;
+font-size: 18px;
+font-weight: 800;
+font-family: arial, helvetica, sans serif;
+}
+
+#placeholder {
+background: #222;
+border: 1px outset black;
+border-radius: 10px;
+box-shadow: 0px 0px 10px 1px black;
+position: absolute;
+left: 0;
+right: 0;
+top: 0;
+bottom: 0;
+margin: auto;
+width: 400px;
+height: 180px;
+color: #eee;
+text-align: center;
+padding-top: 20px;
+}
+
+#start {
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#aebcbf+0,6e7774+50,0a0e0a+51,0a0809+100;Black+Gloss */
+background: #aebcbf; /* Old browsers */
+background: -moz-linear-gradient(top,  #aebcbf 0%, #6e7774 50%, #0a0e0a 51%, #0a0809 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top,  #aebcbf 0%,#6e7774 50%,#0a0e0a 51%,#0a0809 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom,  #aebcbf 0%,#6e7774 50%,#0a0e0a 51%,#0a0809 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#aebcbf', endColorstr='#0a0809',GradientType=0 ); /* IE6-9 */
+border-radius: 5px;
+border: 1px outset black;
+color: #33dd44;
+font-size: 24px;
+font-weight: bold;
+box-shadow: 0px 0px 10px 1px black;
+margin-top: 10px;
+}
+
+#start:focus {
+outline: none;
+}
+
+#next {
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#aebcbf+0,6e7774+50,0a0e0a+51,0a0809+100;Black+Gloss */
+background: #aebcbf; /* Old browsers */
+background: -moz-linear-gradient(top,  #aebcbf 0%, #6e7774 50%, #0a0e0a 51%, #0a0809 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top,  #aebcbf 0%,#6e7774 50%,#0a0e0a 51%,#0a0809 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom,  #aebcbf 0%,#6e7774 50%,#0a0e0a 51%,#0a0809 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#aebcbf', endColorstr='#0a0809',GradientType=0 ); /* IE6-9 */
+border-radius: 5px;
+border: 1px outset black;
+color: #3344cc;
+font-size: 24px;
+font-weight: bold;
+box-shadow: 0px 0px 10px 1px black;
+margin-top: 20px;
+}
+
+#next:focus {
+outline: none;
+}
+
+#ans {
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#aebcbf+0,6e7774+50,0a0e0a+51,0a0809+100;Black+Gloss */
+background: #aebcbf; /* Old browsers */
+background: -moz-linear-gradient(top,  #aebcbf 0%, #6e7774 50%, #0a0e0a 51%, #0a0809 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top,  #aebcbf 0%,#6e7774 50%,#0a0e0a 51%,#0a0809 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom,  #aebcbf 0%,#6e7774 50%,#0a0e0a 51%,#0a0809 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#aebcbf', endColorstr='#0a0809',GradientType=0 ); /* IE6-9 */
+border-radius: 5px;
+border: 1px outset black;
+color: #cc9944;
+font-size: 24px;
+font-weight: bold;
+box-shadow: 0px 0px 10px 1px black;
+margin-top: 20px;
+}
+
+#ans:focus {
+outline: none;
+}
+
+#wait {
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#aebcbf+0,6e7774+50,0a0e0a+51,0a0809+100;Black+Gloss */
+background: #aebcbf; /* Old browsers */
+background: -moz-linear-gradient(top,  #aebcbf 0%, #6e7774 50%, #0a0e0a 51%, #0a0809 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top,  #aebcbf 0%,#6e7774 50%,#0a0e0a 51%,#0a0809 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom,  #aebcbf 0%,#6e7774 50%,#0a0e0a 51%,#0a0809 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#aebcbf', endColorstr='#0a0809',GradientType=0 ); /* IE6-9 */
+border-radius: 5px;
+border: 1px outset black;
+color: #cc9944;
+font-size: 24px;
+font-weight: bold;
+box-shadow: 0px 0px 10px 1px black;
+margin-top: 20px;
+}
+
+#wait:focus {
+outline: none;
+}
+
+#logo {
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#aebcbf+0,6e7774+50,0a0e0a+51,0a0809+100;Black+Gloss */
+background: #aebcbf; /* Old browsers */
+background: -moz-linear-gradient(top,  #aebcbf 0%, #6e7774 50%, #0a0e0a 51%, #0a0809 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top,  #aebcbf 0%,#6e7774 50%,#0a0e0a 51%,#0a0809 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom,  #aebcbf 0%,#6e7774 50%,#0a0e0a 51%,#0a0809 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#aebcbf', endColorstr='#0a0809',GradientType=0 ); /* IE6-9 */
+position: absolute;
+top: 50px;
+left: 10px;
+font-size: 56px;
+font-family: arial, helvetica, sans serif;
+font-weight: bold;
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+text-fill-color: transparent;
+cursor: pointer;
+}
+
+#logobg {
+position: absolute;
+top: 50px;
+left:10px;
+font-size: 56px;
+font-family: arial, helvetica, sans serif;
+font-weight: bold;
+text-shadow: 0px 0px 6px #3388bb, 12px 10px 4px #111;
+color: transparent;
+}
+
+#clog {
+position: absolute;
+bottom: 20px;
+left: 0;
+right: 0;
+margin-left: auto;
+margin-right: auto;
+height: 90px;
+width: 330px;
+overflow-y: auto;
+background: #222;
+border: 1px outset black;
+border-radius: 10px;
+box-shadow: 0px 0px 10px 1px black;
+color: #aaa;
+font-family: arial, helvetica, sans serif;
+font-size: 13px;
+padding: 5px;
+}
+
+.range {
+width: 200px;
+height: 10px;
+background: #333;
+cursor: default;
+border-radius: 10px;
+border: 1px inset #555;
+}
+
+.pointer {
+position: relative;
+top: -25px;
+cursor: pointer;
+font-size: 34px;
+font-weight: bold;
+}
+
+.track {
+position: relative;
+height: 10px;
+border-radius: 10px;
+top: 0px;
+background: #334477;
+width: 0px;
+}
+
+.block {
+position: relative;
+height: 10px;
+border-radius: 0px 10px 10px 0px;
+top: -10px;
+background: #773344;
+left: 70px;
+}
+</style>
+</head>
+
+<body>
+
+
+    <!--<div class="app">
+        <h1>Filmeraten</h1>
+        <div id="deviceready" class="blink">
+            <p class="event listening">Connecting to Device</p>
+            <p class="event received">Device is Ready</p>
+        </div>
+    </div>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript">
+        app.initialize();
+    </script>-->
+<!--<div id="head"><button id="close">X</button></div>-->
+<div id="body">
+<audio id="player"></audio>
+<span id="logobg">Filmeraten</span>
+<span id="logo">Filmeraten</span>
+<div id="placeholder"><button id="wait">Listen . . .</button></div>
+<div id="setup"><center>
+<table border="0" style="color:#eee; font-family:arial, helvetica, sans serif; width:380px;">
+<tr><td>Runden:</td><td><div id="r_r" class="range"><div id="r_t" class="track"></div><div class="block" style="width:130px;" title="Aktuelles Maximum erreicht."></div><span id="r_p" class="pointer" style="top:-35px;">&#8226;</span></div></td><td><span id="rounds_out">10</span><input type="range" id="rounds" value="10" min="10" max="50" step="5" style="visibility:hidden; width:0;" /></td></tr>
+<tr><td>Abspieldauer:</td><td><div id="d_r" class="range"><div id="d_t" class="track"></div><span id="d_p" class="pointer">&#8226;</span></div></td><td><input type="range" id="duration" value="15" min="5" max="35" step="5" style="visibility:hidden; width:0;"/><span id="duration_out">15</span></td></tr>
+<tr><td>Startpunkt:</td><td><div id="c_r" class="range"><div id="c_t" class="track"></div><span id="c_p" class="pointer">&#8226;</span></div></td><td><input type="range" id="current" value="0" min="0" max="60" step="10" style="visibility:hidden; width:0;"/><span id="current_out">0</span></td></tr>
+<tr><td>Voreinstellungen: </td><td><div id="def_r" class="range"><div id="def_t" class="track"></div><span id="def_p" class="pointer">&#8226;</span></div></td><td width="50"><input id="defaults" type="range" min="0" max="4" step="1" value="2"  style="visibility:hidden; width:0;" /><span id="def_out" style="font-size:12px;">Mittel</span></td></tr></table>
+<button id="start">Start</button>
+</div>
+<div id="answers"></div>
+<div id="clog"></div>
+</div>
+</body>
+
+</html>
